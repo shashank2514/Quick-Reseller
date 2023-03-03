@@ -12,6 +12,9 @@
         android:theme="@style/Theme.QuickResellerproject"
         tools:targetApi="31">
         <activity
+            android:name=".ItemDetails"
+            android:exported="false" />
+        <activity
             android:name=".PostItem"
             android:exported="false">
             <meta-data
