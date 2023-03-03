@@ -12,6 +12,13 @@
         android:theme="@style/Theme.QuickResellerproject"
         tools:targetApi="31">
         <activity
+            android:name=".About_Us"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".AdminHome"
             android:exported="false">
             <meta-data
