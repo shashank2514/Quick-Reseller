@@ -37,12 +37,12 @@ public class login extends AppCompatActivity {
                 String upass=password.getText().toString();
                 Log.i("uname", uname+" "+upass);
                 if(uname.equals("admin")){
-                    //Intent i = new Intent(getApplicationContext(),AdminHome.class);
-                    //startActivity(i);
+                    Intent i = new Intent(getApplicationContext(),AdminHome.class);
+                    startActivity(i);
                 }
                 else{
-                    //Intent i = new Intent(getApplicationContext(),Home.class);
-                    //startActivity(i);
+                    Intent i = new Intent(getApplicationContext(),Home.class);
+                    startActivity(i);
                 }}
         });
 
@@ -51,8 +51,8 @@ public class login extends AppCompatActivity {
             public void onClick(View view) {
                 Toast toast=Toast.makeText(getApplicationContext(),"sign up", Toast.LENGTH_SHORT);
                 toast.show();
-                //Intent i = new Intent(getApplicationContext(),signup.class);
-                //startActivity(i);
+                Intent i = new Intent(getApplicationContext(),signup.class);
+                startActivity(i);
             }
         });
     }
