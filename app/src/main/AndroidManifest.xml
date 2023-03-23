@@ -12,6 +12,11 @@
         android:theme="@style/Theme.QuickResellerproject"
         tools:targetApi="31">
         <activity
+            android:name=".AdminItemInfo"
+            android:exported="false"
+            android:label="@string/title_activity_admin_item_info"
+            android:theme="@style/Theme.QuickResellerproject.NoActionBar" />
+        <activity
             android:name=".BookItem"
             android:exported="false">
             <meta-data
