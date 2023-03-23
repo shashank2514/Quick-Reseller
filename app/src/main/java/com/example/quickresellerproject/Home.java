@@ -9,16 +9,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Home extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private BookAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     public ArrayList<BookItem> bookitem;
+    public DatabaseReference databaseReference;
+    ProgressBar progressBar;
+    FirebaseUser firebaseUser;
+    FirebaseAuth auth;
 
 
     @Override
@@ -27,13 +42,8 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         bookitem=new ArrayList<>();
-        bookitem.add(new BookItem("Book","Descrption1","Price1","Date1"));
-        bookitem.add(new BookItem("car","Descrption1","Price1","Date1"));
-        bookitem.add(new BookItem("Tv","Descrption1","Price1","Date1"));
-        bookitem.add(new BookItem("camera","Descrption1","Price1","Date1"));
-        bookitem.add(new BookItem("Ac","Descrption1","Price1","Date1"));
-        bookitem.add(new BookItem("Phone","Descrption1","Price1","Date1"));
-        bookitem.add(new BookItem("Headphones","Descrption1","Price1","Date1"));
+        databaseReference= FirebaseDatabase.getInstance().getReference("Posts");
+
 
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -42,7 +52,54 @@ public class Home extends AppCompatActivity {
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+//        progressBar = findViewById(R.id.progress_bar);
+//        progressBar.setVisibility(View.VISIBLE);
+
+        auth=FirebaseAuth.getInstance();
+        firebaseUser =auth.getCurrentUser();
+
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                    for(DataSnapshot dataSnapshot1:dataSnapshot.getChildren()){
+                        ReadWriteItemDetails post=dataSnapshot1.getValue(ReadWriteItemDetails.class);
+
+                        Date dt = new Date();
+                        SimpleDateFormat dateFormat;
+                        dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        String date=""+dateFormat.format(dt);
+
+                        bookitem.add(new BookItem(post.name,post.description,post.price,date,post.Image_url));
+                    }
+
+                }
+//                progressBar.setVisibility(View.GONE);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        mAdapter.setOnItemClickListener(new BookAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position){
+                Intent i=new Intent(getApplicationContext(),item_info.class);
+                i.putExtra("name",bookitem.get(position).getItemName());
+                i.putExtra("description",bookitem.get(position).getItemDescription());
+                i.putExtra("price",bookitem.get(position).getItemPrice());
+                i.putExtra("date",bookitem.get(position).getItemDate());
+                i.putExtra("imgUrl",bookitem.get(position).getImageUrl());
+                startActivity(i);
+            }
+        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -52,7 +109,7 @@ public class Home extends AppCompatActivity {
         MenuItem PostItem=menu.findItem(R.id.action_post);
         MenuItem AboutItem=menu.findItem(R.id.action_about_app);
         MenuItem ContactItem=menu.findItem(R.id.action_contact_us);
-        MenuItem infoItem=menu.findItem(R.id.action_item_info);
+        MenuItem logoutItem=menu.findItem(R.id.action_logout);
 
         PostItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -72,14 +129,6 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        infoItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                Intent i = new Intent(getApplicationContext(),item_info.class);
-                startActivity(i);
-                return false;
-            }
-        });
 
         ContactItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -90,12 +139,29 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        logoutItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                FirebaseAuth.getInstance().signOut();
+                Intent i=new Intent(getApplicationContext(),login.class);
+                startActivity(i);
+                finish();
+                return false;
+            }
+        });
+
         SearchView searchView= (SearchView) menuItem.getActionView();
         searchView.setQueryHint("Type here to search");
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
                 ArrayList<BookItem> filteredbookitem=new ArrayList<>();
                 for(BookItem book:bookitem){
                     if(book.getItemName().toLowerCase().contains(s.toLowerCase(
@@ -108,11 +174,19 @@ public class Home extends AppCompatActivity {
                 }
                 mAdapter = new BookAdapter(filteredbookitem);
                 mRecyclerView.setAdapter(mAdapter);
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String s) {
+                mAdapter.setOnItemClickListener(new BookAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position){
+                        Intent i=new Intent(getApplicationContext(),item_info.class);
+                        i.putExtra("name",filteredbookitem.get(position).getItemName());
+                        i.putExtra("description",filteredbookitem.get(position).getItemDescription());
+                        i.putExtra("price",filteredbookitem.get(position).getItemPrice());
+                        i.putExtra("date",filteredbookitem.get(position).getItemDate());
+                        i.putExtra("imgUrl",filteredbookitem.get(position).getImageUrl());
+                        startActivity(i);
+                    }
+                });
 
                 return false;
             }
