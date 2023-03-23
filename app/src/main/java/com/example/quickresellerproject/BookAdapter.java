@@ -13,6 +13,18 @@ import java.util.ArrayList;
 
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ExampleViewHolder> {
+
+
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
+
     private ArrayList<BookItem> mExampleList;
 
 
@@ -22,13 +34,24 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ExampleViewHol
         public TextView mItemPrice;
         public TextView mItemDate;
 
-        public ExampleViewHolder(View itemView) {
+
+        public ExampleViewHolder(View itemView ,final OnItemClickListener listener) {
             super(itemView);
 
             mItemName=itemView.findViewById(R.id.item_name);
-            mItemDescription=itemView.findViewById(R.id.item_description);
             mItemPrice = itemView.findViewById(R.id.item_price);
             mItemDate = itemView.findViewById(R.id.item_date);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -39,7 +62,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ExampleViewHol
     @Override
     public ExampleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.book_item, parent, false);
-        ExampleViewHolder evh = new ExampleViewHolder(v);
+        ExampleViewHolder evh = new ExampleViewHolder(v,mListener);
         return evh;
     }
 
@@ -47,9 +70,10 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ExampleViewHol
     public void onBindViewHolder(ExampleViewHolder holder, int position) {
         BookItem currentItem = mExampleList.get(position);
         holder.mItemName.setText(currentItem.getItemName());
-        holder.mItemDescription.setText(currentItem.getItemDescription());
-        holder.mItemPrice.setText(currentItem.getItemPrice());
-        holder.mItemDate.setText(currentItem.getItemDate());
+        String priceval="Price: "+currentItem.getItemPrice()+"$";
+        holder.mItemPrice.setText(priceval);
+        String dateVal="Date: "+currentItem.getItemDate();
+        holder.mItemDate.setText(dateVal);
     }
 
     @Override
