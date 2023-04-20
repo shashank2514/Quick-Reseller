@@ -1,11 +1,7 @@
 # Quick-Reseller
 <a name="readme-top"></a>
 
-# Quick-Reseller 
 
-<!-- PROJECT SHIELDS -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Supervisors][supervisors-shield]][supervisors-url]
 
 
 <!-- USERNAME AND PASSWORD -->
@@ -57,7 +53,6 @@ The application helps people to sell or buy goods which are unused or used in ou
 •	Here the user can contact us by giving the name, email number and message to contact us for any issues.
 
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTACT INFO -->
 ## Contact Info of Collaborators
