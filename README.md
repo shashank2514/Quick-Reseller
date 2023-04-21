@@ -1,7 +1,7 @@
 # Quick-Reseller
 <a name="readme-top"></a>
 
-<img src="C:\Users\s547089\AndroidStudioProjects\Quick-Reseller\qr-logo.png" width="100px" height="100">
+<img src="C:\Users\s547089\AndroidStudioProjects\Quick-Reseller\app\src\main\res\qr-logo.png" width="100px" height="100">
 
 
 
