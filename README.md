@@ -1,9 +1,10 @@
 # Quick-Reseller
 <a name="readme-top"></a>
 
-<img src="C:\Users\s547089\AndroidStudioProjects\Quick-Reseller\app\src\main\res\qr-logo.png" width="100px" height="100">
 
 
+
+![qr-logo](https://user-images.githubusercontent.com/98116079/233703835-7ec3bdb4-f91c-4769-8c98-26c8527c7ea4.png)
 
 <!-- USERNAME AND PASSWORD -->
 ## ADMIN Username and Password
